@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "login": "anas1",
+      "walletId": "345676867",
+      "password": "qewrg",
+      "count": 0
+    },
+    {
+      "login": "dima",
+      "walletId": "345676844",
+      "password": "qewek",
+      "count": 0
+    },
+    {
+      "login": "anas456",
+      "walletId": "140932063",
+      "password": "qewkbhk",
+      "count": 0
+    },
+    {
+      "login": "anas",
+      "walletId": "410536814",
+      "password": "1",
+      "count": 0
+    },
+    {
+      "login": "qwer",
+      "walletId": "478965209",
+      "password": "wre",
+      "count": 0
+    },
+    {
+      "login": "fgh",
+      "walletId": "200185239",
+      "password": "qeweerbk",
+      "count": 0
+    }
+  ]
+}
