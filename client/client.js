@@ -30,6 +30,14 @@ rl.on('line', (input) => {
             client.write(packetLogIn(params[0], params[1]));
             break;
         }
+        case 'logout': { //logIn login password
+            client.write(packetLogout());
+            break;
+        }
+        case 'check': {
+            client.write(packetCheckWallet());
+            break;
+        }
         default: {
             console.log("Error! Try it again")
         }
@@ -47,6 +55,14 @@ const packetGetAllWallets = () => {
 const packetLogIn = (login, password) => {
     return Buffer.from(JSON.stringify(Packet.createLogIn(login, password)))
 }
+
+const packetLogout = () => {
+    return Buffer.from(JSON.stringify(Packet.createLogout()))
+}
+
+const packetCheckWallet = () => {
+    return Buffer.from(JSON.stringify(Packet.createCheckWallet()))
+}
 //принимаешь запросы от сервера
 /*
 1 - сервер отправляет все id кошельков (полю ids json объекта). Приходящее сообщение имеет вид: {}
@@ -59,6 +75,10 @@ client.on('data', (data) => {
     switch (replyPacketServer.type) {
         case (1): {
             console.log("all wallets = ", replyPacketServer.ids.toString());
+            break;
+        }
+        case (2): {
+            console.log("amount of your wallet = ", replyPacketServer.amount.toString());
             break;
         }
         case (5): {

@@ -7,14 +7,15 @@ function Packet(opcode) {
 
 Packet.OPCODE = {
     REG: 0x00,
-    GW: 0x01,
+    GETWAL: 0x01,
+    CHECK: 0x02,
     LOGIN: 0x03,
-    ACK: 0x04,
+    LOGOUT: 0x04,
     ERROR: 0x05,
-    OK: 0x06
+    OK: 0x06,
+
 };
 
-//REG
 Packet.createRegister = (login, password) => {
     return {
         type: Packet.OPCODE.REG,
@@ -23,14 +24,12 @@ Packet.createRegister = (login, password) => {
     }
 }
 
-//GAWI
 Packet.createGetWallets = () => {
     return {
-        type: Packet.OPCODE.GW,
+        type: Packet.OPCODE.GETWAL,
     }
 }
 
-//LI
 Packet.createLogIn = (login, password) => {
     return {
         type: Packet.OPCODE.LOGIN,
@@ -39,6 +38,17 @@ Packet.createLogIn = (login, password) => {
     }
 }
 
+Packet.createLogout = () => {
+    return {
+        type: Packet.OPCODE.LOGOUT,
+    }
+}
+
+Packet.createCheckWallet = () => {
+    return {
+        type: Packet.OPCODE.CHECK,
+    }
+}
 
 
 

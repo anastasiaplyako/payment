@@ -1,55 +1,7 @@
-var fs = require('fs');
+const fs = require('fs');
 const constFile = require('./constInfo');
 const packet = require("./packetServer");
 let authUser = [];
-const methods = require("./methods");
-
-module.exports.workWithFile = async (dataUserMsg, ip) => {
-    let resPak;
-    const data = fs.readFileSync(constFile.FILE_STORAGE_USERS, 'utf8');
-    let dataFromFile = JSON.parse(data);
-    switch (dataUserMsg.type) {
-        case(0): {
-            resPak = await register(dataFromFile, dataUserMsg, ip);
-            console.log("resPak", resPak);
-            break;
-        }
-        case(1): {
-            resPak = methods.getWallets(dataFromFile);
-            console.log("resPak1", resPak);
-            break;
-        }
-        case(2): {
-             const walletInfo = checkWallet(dataFromFile,ip);
-             resPak = walletInfo.amountWallet !== undefined
-                 ? packet.createCheckWallet(walletInfo.amountWallet)
-                 : packet.createError(walletInfo.msgError);
-            console.log("createCheckWallet(walletInfo.amountWallet) = ", walletInfo.amountWallet)
-             break;
-        }
-        case(3): {
-            //authUser.push({ip: '::ffff:127.0.56.1', walletId: '410536814'})
-            let authInfo = auth(dataFromFile, dataUserMsg, ip);
-            console.log("authInfo = ", authInfo)
-            resPak = authInfo.isAuth && !authInfo.msgError
-                ? packet.createOk()
-                : packet.createError(authInfo.msgError);
-            //console.log("auth, ", authUser);
-            break;
-        }
-        case(4): {
-            const logoutInfo = logout(ip);
-            resPak = logoutInfo.isLogout
-                ? packet.createOk()
-                : packet.createError(logoutInfo.msgError);
-            break;
-        }
-        default: {
-            console.log("error with type")
-        }
-    }
-    return resPak;
-};
 
 const checkWallet = (dataFromFile, ip) => {
     let amountWallet = 0;
@@ -163,9 +115,29 @@ const register = async (dataFromFile, dataUserMsg, ip) => {
     return (isFirst) ? packet.createOk() : packet.createError("this user already exist")
 };
 
+const getWallets = (dataFromFile) => {
+    let allWalletsId = [];
+    dataFromFile["users"].map((user) => {
+        allWalletsId.push(user.walletId);
+    });
+    return (allWalletsId)
+        ? packet.createGetWallets(allWalletsId)
+        : packet.createError("no wallets created yet")
+}
 
 const generateOnlineWallet = () => {
     return Math.random().toString().slice(2, 11);
 }
 
-
+module.exports = {
+    checkWallet: checkWallet,
+    updateFile,
+    auth,
+    checkAuth,
+    logout,
+    findAuthWallet,
+    checkLoginPassword,
+    register,
+    getWallets,
+    generateOnlineWallet
+}

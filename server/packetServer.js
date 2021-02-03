@@ -201,17 +201,24 @@ function PacketServer(opcode) {
 PacketServer.OPCODE = {
     REG: 0x00, //now not use
     GW: 0x01,
-    WRQ: 0x02,
+    CHECK: 0x02,
     LOGIN: 0x03,
     ACK: 0x04,
     ERROR: 0x05,
-    OK: 0x06,
+    OK: 0x06
 };
 
 PacketServer.createGetWallets = (ids) => {
     return {
         type: PacketServer.OPCODE.GW,
         ids: ids
+    }
+};
+
+PacketServer.createCheckWallet = (amount) => {
+    return {
+        type: PacketServer.OPCODE.CHECK,
+        amount
     }
 };
 
