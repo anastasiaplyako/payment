@@ -1,9 +1,9 @@
+//создание пакетов
 
 function Packet(opcode) {
     this.opcode = opcode;
     return this;
 }
-
 
 Packet.OPCODE = {
     REG: 0x00,
@@ -11,9 +11,9 @@ Packet.OPCODE = {
     CHECK: 0x02,
     LOGIN: 0x03,
     LOGOUT: 0x04,
-    ERROR: 0x05,
-    OK: 0x06,
-
+    PUT: 0x05,
+    TAKE_OFF: 0x06,
+    TRANSFER: 0x07,
 };
 
 Packet.createRegister = (login, password) => {
@@ -50,8 +50,27 @@ Packet.createCheckWallet = () => {
     }
 }
 
+Packet.createPut = (amount) => {
+    return {
+        type: Packet.OPCODE.PUT,
+        amount
+    }
+}
 
+Packet.createTakeOff = (amount) => {
+    return {
+        type: Packet.OPCODE.TAKE_OFF,
+        amount
+    }
+}
 
+Packet.createTransfer = (amount, billingWalletId) => {
+    return {
+        type: Packet.OPCODE.TRANSFER,
+        amount,
+        billingWalletId
+    }
+}
 
 
 module.exports = Packet;

@@ -1,19 +1,31 @@
 const fs = require('fs');
-const constFile = require('./constInfo');
-const packet = require("./packetServer");
+const constServer = require('./constServer');
 let authUser = [];
 
-const checkWallet = (dataFromFile, ip) => {
-    let amountWallet = 0;
+const checkWallet = async (dataFromFile, ip) => {
+    let amountWallet;
     let msgError;
     const walletId = findAuthWallet(ip);
     if (walletId) {
+        if (checkNumberDevices(walletId) > 1) {
+            await sleep(getRandomInt(100));
+        }
         let userFind = dataFromFile["users"].find(user => user.walletId === walletId);
         amountWallet = userFind.amount
     } else {
-        msgError = "no such wallet exists"
+        msgError = constServer.NO_WALLETS + " or " + constServer.NOT_LOGIN;
     }
     return {amountWallet, msgError}
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+function sleep(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
 }
 
 const auth = (dataFromFile, dataUserMsg, ip) => {
@@ -30,12 +42,22 @@ const auth = (dataFromFile, dataUserMsg, ip) => {
             });
             isAuth = true;
         } else {
-            msgError = "Not authenticated! Try again";
+            msgError = constServer.NOT_AUTH
         }
     } else {
-        msgError = "You are already login, if you want choose another account, logout"
+        msgError = constServer.LOGOUT
     }
     return {isAuth, msgError};
+}
+
+const checkNumberDevices = (walletId) => {
+    let numberDevices = 0;
+    authUser.map(user => {
+       if (user.walletId === walletId) {
+           numberDevices++;
+       }
+    })
+    return numberDevices;
 }
 
 const checkAuth = (ip) => {
@@ -62,12 +84,11 @@ const logout = (ip) => {
     let isLogout = false;
     let msgError;
     if (checkAuth(ip)) {
-        let indexLogout = authUser.findIndex((user, index) => user.ip === ip);
-        authUser.splice(indexLogout);
+        let indexLogout = authUser.findIndex((user) => user.ip === ip);
+        authUser.splice(indexLogout, 1);
         isLogout = true;
-        console.log("authUser =", authUser)
     } else {
-        msgError = "you are not login in system";
+        msgError = constServer.NOT_LOGIN;
     }
     return {
         isLogout, msgError
@@ -87,32 +108,69 @@ const checkLoginPassword = (dataFromFile, login, password) => {
 }
 
 const updateFile = async (updateObjectJSON) => {
-    await fs.writeFile(constFile.FILE_STORAGE_USERS, JSON.stringify(updateObjectJSON), function writeJSON(err) {
-        if (err) return console.log(err);
-    });
+    await fs.writeFile(
+        constServer.FILE_STORAGE_USERS,
+        JSON.stringify(updateObjectJSON),
+        function writeJSON(err) {
+            if (err) return console.log(err);
+        });
 };
+
+const checkExistLoginPassword = (dataFromFile, login, password) => {
+    return dataFromFile["users"].find(
+        user => user.login === login || user.password === password
+    )
+}
+
+const put = async (dataFromFile, dataUserMsg, ip) => {
+    let msgError;
+    let walletId = findAuthWallet(ip);
+    if (checkNumberDevices(walletId) > 1) {
+        await sleep(getRandomInt(100));
+    }
+    let resultPut = changeAmount(dataFromFile, walletId, dataUserMsg.amount, ip);
+    let isPut = resultPut.isDoneOperation;
+    if (isPut) {
+        await updateFile(dataFromFile);
+    } else {
+        msgError = resultPut.msgError
+    }
+    return {
+        isPut,
+        msgError
+    }
+}
 
 const register = async (dataFromFile, dataUserMsg, ip) => {
     const login = dataUserMsg.login;
     const password = dataUserMsg.password;
-    let isFirst = true;
-    //TODO вынести в отдельную функцию
-    dataFromFile["users"].map((user) => {
-        if (user.login === login && user.password === password) {
-            isFirst = false;
+    let resultRegister = false;
+    let msgError;
+    if (checkAuth(ip)) {
+        return {
+            resultRegister,
+            msgError: constServer.LOGOUT
         }
-    });
-    if (isFirst) {
-        dataFromFile["users"].push({
-            login: login,
-            amount: 0,
-            walletId: generateOnlineWallet()
-        });
-        await updateFile(dataFromFile)
     }
-    const tmp = auth(dataFromFile, dataUserMsg, ip);
-    console.log("tmp = ", tmp, authUser)
-    return (isFirst) ? packet.createOk() : packet.createError("this user already exist")
+    if (checkExistLoginPassword(dataFromFile, login, password)) {
+        return {
+            resultRegister,
+            msgError: constServer.EXIST_PSW_LOG
+        }
+    }
+    dataFromFile["users"].push({
+        login: login,
+        password: password,
+        amount: 0,
+        walletId: generateOnlineWallet(dataFromFile)
+    });
+    await updateFile(dataFromFile);
+    resultRegister = true;
+    auth(dataFromFile, dataUserMsg, ip)
+    return {
+        resultRegister,
+        msgError
+    }
 };
 
 const getWallets = (dataFromFile) => {
@@ -120,13 +178,99 @@ const getWallets = (dataFromFile) => {
     dataFromFile["users"].map((user) => {
         allWalletsId.push(user.walletId);
     });
-    return (allWalletsId)
-        ? packet.createGetWallets(allWalletsId)
-        : packet.createError("no wallets created yet")
+    return allWalletsId;
 }
 
-const generateOnlineWallet = () => {
-    return Math.random().toString().slice(2, 11);
+const generateOnlineWallet = (dataFromFile) => {
+    let isNewWallet = false;
+    let walletId;
+    while (!isNewWallet) {
+        walletId = Math.random().toString().slice(2, 11);
+        if (!dataFromFile["users"].find(user => user.walletId === walletId)) {
+            isNewWallet = true;
+        }
+    }
+    return walletId;
+}
+
+const findUserByWallet = (dataFromFile, walletId) => {
+    return dataFromFile["users"].find(user => user.walletId === walletId);
+}
+
+//TODO - optimize and delete 3 if
+const changeAmount = (dataFromFile, walletId, amount, ip) => {
+    let isDoneOperation = false;
+    let msgError;
+    if (checkAuth(ip)) {
+        dataFromFile["users"].map((user) => {
+            if (user.walletId === walletId) {
+                user.amount = +user.amount + +amount;
+                if (user.amount < 0) {
+                    msgError = constServer.NOT_ENOUGH_MONEY
+                } else {
+                    isDoneOperation = true;
+                }
+
+            }
+        });
+    } else {
+        msgError = constServer.NOT_LOGIN;
+    }
+    return {
+        isDoneOperation,
+        msgError
+    };
+}
+
+const takeOff = async (dataFromFile, dataUserMsg, ip) => {
+    let msgError;
+    let walletId = findAuthWallet(ip);
+    if (checkNumberDevices(walletId) > 1) {
+        await sleep(getRandomInt(100));
+    }
+    let resultTakeOff = changeAmount(dataFromFile, walletId, -dataUserMsg.amount, ip);
+    let isTakeOff = resultTakeOff.isDoneOperation;
+    if (isTakeOff) {
+        await updateFile(dataFromFile);
+    } else {
+        msgError = resultTakeOff.msgError
+    }
+    return {
+        isTakeOff,
+        msgError
+    }
+}
+
+const transfer = async (dataFromFile, dataUserMsg, ip) => {
+    let isTransfer = false;
+    let msgError;
+    const isExistBillingWallet = findUserByWallet(dataFromFile, dataUserMsg.billingWalletId);
+    if (!isExistBillingWallet) {
+        return {
+            isTransfer: isTransfer,
+            msgError: constServer.NOT_BILLING_WALLET
+        }
+    }
+    let walletId = findAuthWallet(ip);
+    if (checkNumberDevices(walletId) > 1) {
+        await sleep(getRandomInt(100));
+    }
+    let resultTakeOff = changeAmount(dataFromFile, walletId, -dataUserMsg.amount, ip);
+    if (resultTakeOff.isDoneOperation) {
+        let resultPut = changeAmount(dataFromFile, dataUserMsg.billingWalletId, dataUserMsg.amount, ip);
+        if (resultPut.isDoneOperation) {
+            await updateFile(dataFromFile);
+            isTransfer = true;
+        } else {
+            msgError = resultPut.msgError;
+        }
+    } else {
+        msgError = resultTakeOff.msgError;
+    }
+    return {
+        isTransfer: isTransfer,
+        msgError
+    }
 }
 
 module.exports = {
@@ -139,5 +283,8 @@ module.exports = {
     checkLoginPassword,
     register,
     getWallets,
-    generateOnlineWallet
+    generateOnlineWallet,
+    put,
+    takeOff,
+    transfer
 }

@@ -22,19 +22,25 @@
       "login": "anas",
       "walletId": "410536814",
       "password": "1",
-      "amount": 120
+      "amount": 1206
     },
     {
       "login": "qwer",
       "walletId": "478965209",
       "password": "wre",
-      "amount": 0
+      "amount": 2
     },
     {
-      "login": "fgh",
-      "walletId": "200185239",
-      "password": "qeweerbk",
-      "amount": 0
+      "login": "an",
+      "password": "hj",
+      "amount": 0,
+      "walletId": "867245600"
+    },
+    {
+      "login": "ugl",
+      "password": "flugi",
+      "amount": 1,
+      "walletId": "824278827"
     }
   ]
 }

@@ -1,19 +1,20 @@
 const net = require('net');
-const methods = require('./methodsServer');
-
+const methods = require('./chooseMethods');
+const constServer = require('./constServer');
 const server = net.createServer((c) => {
     // 'connection' listener.
-    console.log('client connected');
+    console.log(constServer.CONNECT);
     c.on('end', () => {
-        console.log('client disconnected');
+        methods.workWithFile({type: 8}, ip).then((resolve, reject) => {
+        });
+        console.log(constServer.DISCONNECT);
     });
     //c.pipe(c);
 
+    let ip = Math.random().toString().slice(2, 11);
     console.log("c = ", c.localAddress);
     c.on('data', data => {
-        console.log("data = ", JSON.parse(data.toString()));
-        methods.workWithFile(JSON.parse(data.toString()), c.localAddress).then((resolve, reject) => {
-            console.log("res = ", resolve);
+        methods.workWithFile(JSON.parse(data.toString()), ip).then((resolve, reject) => {
             c.write(Buffer.from(JSON.stringify(resolve)));
         });
     });
@@ -23,7 +24,7 @@ server.on('error', (err) => {
     throw err;
 });
 
-server.listen(8124, () => {
-    console.log('server bound');
+server.listen(constServer.PORT, () => {
+    console.log(constServer.BOUND);
 });
 
