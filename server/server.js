@@ -2,14 +2,13 @@ const net = require('net');
 const methods = require('./chooseMethods');
 const constServer = require('./constServer');
 const server = net.createServer((c) => {
-    // 'connection' listener.
+
     console.log(constServer.CONNECT);
     c.on('end', () => {
         methods.workWithFile({type: 8}, ip).then((resolve, reject) => {
         });
         console.log(constServer.DISCONNECT);
     });
-    //c.pipe(c);
 
     let ip = Math.random().toString().slice(2, 11);
     console.log("c = ", c.localAddress);

@@ -4,11 +4,8 @@ function PacketServer(opcode) {
 }
 
 PacketServer.OPCODE = {
-    REG: 0x00, //now not use
     GW: 0x01,
     CHECK: 0x02,
-    LOGIN: 0x03,  //now not use
-    ACK: 0x04,  //now not use
     ERROR: 0x05,
     OK: 0x06
 };
