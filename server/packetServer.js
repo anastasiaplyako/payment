@@ -1,4 +1,3 @@
-
 function PacketServer(opcode) {
     this.opcode = opcode;
     return this;

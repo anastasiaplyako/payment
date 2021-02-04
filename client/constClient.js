@@ -6,6 +6,7 @@ const NO_REPLY = "No reply from server";
 const CONNECT = "connected to server!";
 const DISCONNECT = "disconnected from server";
 const PORT = 8124;
+const HOST = "127.0.0.1";
 
 module.exports = {
     ALL_WALLET,
@@ -15,5 +16,6 @@ module.exports = {
     NO_REPLY,
     CONNECT,
     DISCONNECT,
-    PORT
+    PORT,
+    HOST
 }

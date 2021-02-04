@@ -5,7 +5,7 @@ const constClient = require("./constClient");
 var readline = require('readline'),
     rl = readline.createInterface(process.stdin, process.stdout);
 
-const client = net.createConnection({port: constClient.PORT}, () => {
+const client = net.createConnection({host: constClient.host, port: constClient.PORT}, () => {
     // 'connect' listener.
     console.log(constClient.CONNECT);
 });

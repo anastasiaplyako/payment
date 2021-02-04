@@ -17,16 +17,15 @@ module.exports.workWithFile = async (dataUserMsg, ip) => {
             break;
         }
         case(2): {
-             resPak = await packetMethods.createPacketCheckWallet(dataFromFile,ip);
-             break;
+            resPak = await packetMethods.createPacketCheckWallet(dataFromFile, ip);
+            break;
         }
         case(3): {
             resPak = packetMethods.createPacketLogin(dataFromFile, dataUserMsg, ip);
             break;
         }
         case(4):
-        case(8):
-            {
+        case(8): {
             resPak = packetMethods.createPacketLogout(ip);
             break;
         }

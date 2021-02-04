@@ -53,9 +53,9 @@ const auth = (dataFromFile, dataUserMsg, ip) => {
 const checkNumberDevices = (walletId) => {
     let numberDevices = 0;
     authUser.map(user => {
-       if (user.walletId === walletId) {
-           numberDevices++;
-       }
+        if (user.walletId === walletId) {
+            numberDevices++;
+        }
     })
     return numberDevices;
 }
