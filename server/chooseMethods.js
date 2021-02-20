@@ -43,7 +43,7 @@ module.exports.workWithFile = async (dataUserMsg, ip) => {
         }
         case(8): {
             resPak = packetMethods.createPacketOk();
-            console.log(JSON.stringify(dataUserMsg.text));
+            console.log(JSON.stringify(dataUserMsg.text).toString());
             //resPak = packetMethods.createPacketTransfer(dataFromFile, dataUserMsg, ip);
             break;
         }
