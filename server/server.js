@@ -28,6 +28,7 @@ const server = net.createServer((c) => {
                 for (let i = 0; i < blocks; i++) {
                     let start = i * BLOCK_SIZE;
                     let end = Math.min(start + BLOCK_SIZE, buf.length);
+                    console.log("buf", start, end, buf.slice(start, end));
                     c.write(buf.slice(start, end));
                 }
             });
