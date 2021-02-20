@@ -3,8 +3,8 @@ const methods = require('./chooseMethods');
 const constServer = require('./constServer');
 const BLOCK_SIZE = 1024;
 
-const server = net.createServer((c) => {
 
+const server = net.createServer((c) => {
 
 
     console.log(constServer.CONNECT);
@@ -13,26 +13,23 @@ const server = net.createServer((c) => {
         });
         console.log(constServer.DISCONNECT);
     });
-    //getWallets
 
     let ip = Math.random().toString().slice(2, 11);
     console.log("c = ", c.localAddress);
 
     let allBuffer = '';
+
     c.on('data', data => {
-        allBuffer += data;
-        if (data.length < BLOCK_SIZE) {
+        if (data[data.length - 1] === 3) {
+            data = data.slice(0, data.length - 1);
+            allBuffer += data;
             methods.workWithFile(JSON.parse(allBuffer.toString()), ip).then((resolve, reject) => {
-                let buf = Buffer.from(JSON.stringify(resolve));
-                const blocks = Math.floor(buf.length / BLOCK_SIZE | 0) + 1;
-                for (let i = 0; i < blocks; i++) {
-                    let start = i * BLOCK_SIZE;
-                    let end = Math.min(start + BLOCK_SIZE, buf.length);
-                    console.log("buf", start, end, buf.slice(start, end));
-                    c.write(buf.slice(start, end));
-                }
+                let buf = Buffer.from(JSON.stringify(resolve) + '\u0003');
+                c.write(buf)
             });
             allBuffer = '';
+        } else {
+            allBuffer += data;
         }
     });
 });

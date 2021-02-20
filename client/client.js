@@ -10,57 +10,48 @@ const client = net.createConnection({host: constClient.HOST, port: 8124}, () => 
     console.log(constClient.CONNECT);
 });
 
-const splitBlock = (client, packet ) => {
-    const blocks = Math.floor(packet.length / constClient.BLOCK_SIZE | 0) + 1;
-    for (let i = 0; i < blocks; i++) {
-        let start = i * constClient.BLOCK_SIZE;
-        let end = Math.min(start + constClient.BLOCK_SIZE, packet.length);
-        client.write(packet.slice(start, end));
-    }
-}
-
 rl.on('line', (input) => {
     let inputData = input.split(" ");
     let [methods, ...params] = inputData;
     switch (methods) {
         case 'register': {
-            splitBlock(client, methodsPacket.packetRegister(params[0], params[1]))
+            client.write(methodsPacket.packetRegister(params[0], params[1]))
             break;
         }
         case 'getWallets': {
-            splitBlock(client, methodsPacket.packetGetAllWallets());
+            client.write(methodsPacket.packetGetAllWallets());
             break;
         }
         case 'logIn': {
-            splitBlock(client, methodsPacket.packetLogIn(params[0], params[1]));
+            client.write(methodsPacket.packetLogIn(params[0], params[1]));
             break;
         }
         case 'logout': {
-            splitBlock(client, methodsPacket.packetLogout());
+            client.write(methodsPacket.packetLogout());
             break;
         }
         case 'check': {
-            splitBlock(client, methodsPacket.packetCheckWallet());
+            client.write(methodsPacket.packetCheckWallet());
             break;
         }
         case 'put': {
-            splitBlock(client, methodsPacket.packetPut(+params[0]));
+            client.write(methodsPacket.packetPut(+params[0]));
             break;
         }
         case 'takeOff': {
-            splitBlock(client, methodsPacket.packetTakeOff(+params[0]));
+            client.write(methodsPacket.packetTakeOff(+params[0]));
             break;
         }
         case 'transfer': {
-            splitBlock(client, methodsPacket.packetTransfer(+params[0], params[1]));
+            client.write(methodsPacket.packetTransfer(+params[0], params[1]));
             break;
         }
         case 'bigMsg': {
-            splitBlock(client, methodsPacket.packetBigMsg());
+            client.write(methodsPacket.packetBigMsg());
             break;
         }
         case 'bigMsgServer': {
-            splitBlock(client, methodsPacket.packetBigMsgServer());
+            client.write(methodsPacket.packetBigMsgServer());
             break;
         }
         default: {
@@ -71,15 +62,16 @@ rl.on('line', (input) => {
 
 let body = '';
 client.on('data', (chunk) => {
-    console.log(chunk.length);
-    body += chunk;
-    if (chunk.length < constClient.BLOCK_SIZE) {
-        console.log("end")
-        /*let replyPacketServer = JSON.parse(body.toString());
+    console.log("chunk", chunk.length)
+    if (chunk[chunk.length - 1] === 3) {
+        chunk = chunk.slice(0, chunk.length - 1);
+        body += chunk;
+        let replyPacketServer = JSON.parse(body.toString());
         methodReply.reply(replyPacketServer);
-        body = '';*/
+        body = '';
+    } else {
+        body += chunk;
     }
-
 });
 
 client.on('end', () => {
