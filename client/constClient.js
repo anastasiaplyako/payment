@@ -7,7 +7,7 @@ const CONNECT = "connected to server!";
 const DISCONNECT = "disconnected from server";
 const PORT = 8124;
 const HOST = '5.187.5.237'; //5.187.5.237
-const BLOCK_SIZE = 65536;
+const BLOCK_SIZE = 1024;
 
 module.exports = {
     ALL_WALLET,

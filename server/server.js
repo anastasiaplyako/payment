@@ -1,7 +1,7 @@
 const net = require('net');
 const methods = require('./chooseMethods');
 const constServer = require('./constServer');
-const BLOCK_SIZE = 65536;
+const BLOCK_SIZE = 1024;
 
 const server = net.createServer((c) => {
 

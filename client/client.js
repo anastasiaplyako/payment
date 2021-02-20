@@ -71,11 +71,13 @@ rl.on('line', (input) => {
 
 let body = '';
 client.on('data', (chunk) => {
+    console.log(chunk.length);
     body += chunk;
     if (chunk.length < constClient.BLOCK_SIZE) {
-        let replyPacketServer = JSON.parse(body.toString());
+        console.log("end")
+        /*let replyPacketServer = JSON.parse(body.toString());
         methodReply.reply(replyPacketServer);
-        body = '';
+        body = '';*/
     }
 
 });
