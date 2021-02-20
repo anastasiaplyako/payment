@@ -58,6 +58,15 @@ const createPacketTransfer = async (dataFromFile, dataUserMsg, ip) => {
         : packet.createError(resultOperation.msgError)
 }
 
+
+const createPacketOk = async () => {
+    return packet.createOk();
+}
+
+const createPacketBigMsg = async () => {
+    return packet.createBigMsg();
+}
+
 module.exports = {
     createPacketLogout,
     createPacketLogin,
@@ -67,4 +76,6 @@ module.exports = {
     createPacketPut,
     createPacketTakeOff,
     createPacketTransfer,
+    createPacketOk,
+    createPacketBigMsg
 }

@@ -7,6 +7,7 @@ module.exports.workWithFile = async (dataUserMsg, ip) => {
     let resPak;
     const data = fs.readFileSync(constFile.FILE_STORAGE_USERS, 'utf8');
     let dataFromFile = JSON.parse(data);
+    console.log("dataUserMsg.type", dataUserMsg.type);
     switch (dataUserMsg.type) {
         case(0): {
             resPak = await packetMethods.createPacketRegister(dataFromFile, dataUserMsg, ip);
@@ -24,8 +25,7 @@ module.exports.workWithFile = async (dataUserMsg, ip) => {
             resPak = packetMethods.createPacketLogin(dataFromFile, dataUserMsg, ip);
             break;
         }
-        case(4):
-        case(8): {
+        case(4): {
             resPak = packetMethods.createPacketLogout(ip);
             break;
         }
@@ -39,6 +39,16 @@ module.exports.workWithFile = async (dataUserMsg, ip) => {
         }
         case(7): {
             resPak = packetMethods.createPacketTransfer(dataFromFile, dataUserMsg, ip);
+            break;
+        }
+        case(8): {
+            resPak = packetMethods.createPacketOk();
+            console.log(dataUserMsg);
+            //resPak = packetMethods.createPacketTransfer(dataFromFile, dataUserMsg, ip);
+            break;
+        }
+        case(9): {
+            resPak = packetMethods.createPacketBigMsg()
             break;
         }
         default: {

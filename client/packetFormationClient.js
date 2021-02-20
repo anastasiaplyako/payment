@@ -33,6 +33,14 @@ const packetTransfer = (amount, billingWalletId) => {
     return Buffer.from(JSON.stringify(Packet.createTransfer(amount, billingWalletId)))
 }
 
+const packetBigMsg = () => {
+    return Buffer.from(JSON.stringify(Packet.createBigMsg()))
+}
+
+const packetBigMsgServer = () => {
+    return Buffer.from(JSON.stringify(Packet.createBigMsgServer()))
+}
+
 module.exports = {
     packetRegister,
     packetGetAllWallets,
@@ -42,4 +50,6 @@ module.exports = {
     packetPut,
     packetTakeOff,
     packetTransfer,
+    packetBigMsg,
+    packetBigMsgServer
 }

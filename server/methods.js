@@ -202,7 +202,7 @@ const changeAmount = (dataFromFile, walletId, amount, ip) => {
     let isDoneOperation = false;
     let msgError;
     if (checkAuth(ip)) {
-        dataFromFile["users"].map((user) => {
+        dataFromFile["users"].map((user) => { //TODO find
             if (user.walletId === walletId) {
                 user.amount = +user.amount + +amount;
                 if (user.amount < 0) {
