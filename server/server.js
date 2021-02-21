@@ -17,20 +17,19 @@ const server = net.createServer((c) => {
     let ip = Math.random().toString().slice(2, 11);
     console.log("c = ", c.localAddress);
 
-    let allBuffer = '';
+    let allBuffer = [];
 
     c.on('data', data => {
         if (data[data.length - 1] === 3) {
             data = data.slice(0, data.length - 1);
-            allBuffer += data.toString('utf8');
-            console.log("allBuffer")
-            methods.workWithFile(JSON.parse(allBuffer.toString('utf8')), ip).then((resolve, reject) => {
+            allBuffer.push(data);
+            methods.workWithFile(JSON.parse(Buffer.concat(allBuffer).toString('utf8')), ip).then((resolve, reject) => {
                 let buf = Buffer.from(JSON.stringify(resolve) + '\u0003', 'utf8');
                 c.write(buf)
             });
-            allBuffer = '';
+            allBuffer = [];
         } else {
-            allBuffer += data;
+            allBuffer.push(data);
         }
     });
 });

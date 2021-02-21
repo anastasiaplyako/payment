@@ -60,17 +60,18 @@ rl.on('line', (input) => {
     }
 });
 
-let body = '';
+let body = [];
 client.on('data', (chunk) => {
-    console.log("chunk", chunk.length)
+    /*console.log("last = ", chunk.toString(), '\n');*/
+
     if (chunk[chunk.length - 1] === 3) {
         chunk = chunk.slice(0, chunk.length - 1);
-        body += chunk.toString('utf8');
-        let replyPacketServer = JSON.parse(body.toString());
+        body.push(chunk);
+        let replyPacketServer = JSON.parse(Buffer.concat(body).toString('utf8'));
         methodReply.reply(replyPacketServer);
-        body = '';
+        body = [];
     } else {
-        body += chunk.toString('utf8');
+        body.push(chunk);
     }
 });
 
