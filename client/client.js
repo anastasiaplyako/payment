@@ -65,12 +65,12 @@ client.on('data', (chunk) => {
     console.log("chunk", chunk.length)
     if (chunk[chunk.length - 1] === 3) {
         chunk = chunk.slice(0, chunk.length - 1);
-        body += chunk;
+        body += chunk.toString('utf8');
         let replyPacketServer = JSON.parse(body.toString());
         methodReply.reply(replyPacketServer);
         body = '';
     } else {
-        body += chunk;
+        body += chunk.toString('utf8');
     }
 });
 

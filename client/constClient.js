@@ -6,7 +6,7 @@ const NO_REPLY = "No reply from server";
 const CONNECT = "connected to server!";
 const DISCONNECT = "disconnected from server";
 const PORT = 8124;
-const HOST = '5.187.5.237'; //5.187.5.237
+const HOST = "5.187.5.237"; //
 const BLOCK_SIZE = 65536;
 
 module.exports = {

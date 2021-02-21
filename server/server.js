@@ -22,8 +22,9 @@ const server = net.createServer((c) => {
     c.on('data', data => {
         if (data[data.length - 1] === 3) {
             data = data.slice(0, data.length - 1);
-            allBuffer += data;
-            methods.workWithFile(JSON.parse(allBuffer.toString()), ip).then((resolve, reject) => {
+            allBuffer += data.toString('utf8');
+            console.log("allBuffer")
+            methods.workWithFile(JSON.parse(allBuffer.toString('utf8')), ip).then((resolve, reject) => {
                 let buf = Buffer.from(JSON.stringify(resolve) + '\u0003', 'utf8');
                 c.write(buf)
             });
