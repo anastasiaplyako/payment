@@ -34,11 +34,11 @@ const packetTransfer = (amount, billingWalletId) => {
 }
 
 const packetBigMsg = () => {
-    return Buffer.from(JSON.stringify(Packet.createBigMsg())+ '\u0003')
+    return Buffer.from(JSON.stringify(Packet.createBigMsg())+ '\u0003', 'utf8')
 }
 
 const packetBigMsgServer = () => {
-    return Buffer.from(JSON.stringify(Packet.createBigMsgServer())+ '\u0003')
+    return Buffer.from(JSON.stringify(Packet.createBigMsgServer())+ '\u0003', 'utf8')
 }
 
 module.exports = {

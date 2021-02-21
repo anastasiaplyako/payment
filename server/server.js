@@ -2,7 +2,7 @@ const net = require('net');
 const methods = require('./chooseMethods');
 const constServer = require('./constServer');
 const BLOCK_SIZE = 1024;
-
+const iconv = require('iconv-lite');
 
 const server = net.createServer((c) => {
 
@@ -24,7 +24,7 @@ const server = net.createServer((c) => {
             data = data.slice(0, data.length - 1);
             allBuffer += data;
             methods.workWithFile(JSON.parse(allBuffer.toString()), ip).then((resolve, reject) => {
-                let buf = Buffer.from(JSON.stringify(resolve) + '\u0003');
+                let buf = Buffer.from(JSON.stringify(resolve) + '\u0003', 'utf8');
                 c.write(buf)
             });
             allBuffer = '';

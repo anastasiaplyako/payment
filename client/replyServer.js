@@ -44,7 +44,7 @@ module.exports.reply = (replyPacketServer) => {
         }
         * */
         case (3): {
-            console.log(replyPacketServer.text);
+            console.log(replyPacketServer.text.toString('utf8'));
             break;
         }
         /*
