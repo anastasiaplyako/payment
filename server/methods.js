@@ -197,7 +197,6 @@ const findUserByWallet = (dataFromFile, walletId) => {
     return dataFromFile["users"].find(user => user.walletId === walletId);
 }
 
-//TODO - optimize and delete 3 if
 const changeAmount = (dataFromFile, walletId, amount, ip) => {
     let isDoneOperation = false;
     let msgError;

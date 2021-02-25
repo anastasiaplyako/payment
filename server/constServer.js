@@ -12,6 +12,7 @@ const NOT_BILLING_WALLET = "This billing wallet isn`t exist";
 const EXIST_PSW_LOG = "such username or password already exists";
 const LOGOUT = "You are login in system. Please logout";
 const NOT_AUTH = "Not authenticated! Try again";
+const LAST_INDEX_NUMBER = 3;
 
 module.exports = {
     FILE_STORAGE_USERS,
@@ -28,4 +29,5 @@ module.exports = {
     EXIST_PSW_LOG,
     LOGOUT,
     NOT_AUTH,
+    LAST_INDEX_NUMBER
 }

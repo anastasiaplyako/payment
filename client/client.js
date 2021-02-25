@@ -4,7 +4,7 @@ const methodReply = require("./replyServer");
 const constClient = require("./constClient");
 var readline = require('readline'),
     rl = readline.createInterface(process.stdin, process.stdout);
-//'5.187.5.237'
+
 const client = net.createConnection({host: constClient.HOST, port: 8124}, () => {
 
     console.log(constClient.CONNECT);
@@ -62,9 +62,7 @@ rl.on('line', (input) => {
 
 let body = [];
 client.on('data', (chunk) => {
-    /*console.log("last = ", chunk.toString(), '\n');*/
-
-    if (chunk[chunk.length - 1] === 3) {
+    if (chunk[chunk.length - 1] === constClient.LAST_INDEX_NUMBER) {
         chunk = chunk.slice(0, chunk.length - 1);
         body.push(chunk);
         let replyPacketServer = JSON.parse(Buffer.concat(body).toString('utf8'));

@@ -64,7 +64,7 @@ module.exports.reply = (replyPacketServer) => {
                type: 6
            }
        * */
-        case (6): { // все хорошо
+        case (6): {
             console.log(constClient.OK);
             break;
         }

@@ -20,7 +20,8 @@ const server = net.createServer((c) => {
     let allBuffer = [];
 
     c.on('data', data => {
-        if (data[data.length - 1] === 3) {
+        if (data[data.length - 1] === constServer.LAST_INDEX_NUMBER) {
+            console.log("data ===", data.toString())
             data = data.slice(0, data.length - 1);
             allBuffer.push(data);
             methods.workWithFile(JSON.parse(Buffer.concat(allBuffer).toString('utf8')), ip).then((resolve, reject) => {

@@ -2,7 +2,7 @@
 const Packet = require('./Packet');
 
 const packetRegister = (login, password) => {
-    return Buffer.from(JSON.stringify(Packet.createRegister(login, password)+ '\u0003'))
+    return Buffer.from(JSON.stringify(Packet.createRegister(login, password))+ '\u0003')
 }
 
 const packetGetAllWallets = () => {
